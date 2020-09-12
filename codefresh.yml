@@ -26,7 +26,6 @@ steps:
       - export CLUSTER_NAME=$(terraform output cluster_name)
       - export RESOURCE_GROUP=$(terraform output resource_group)
       - export REGION=$(terraform output region)
-      # New
       - export DESTROY=$(terraform output destroy)
       - cf_export CLUSTER_NAME RESOURCE_GROUP REGION DESTROY
     when:
@@ -47,7 +46,8 @@ steps:
     when:
       # New
       condition:
-        notDestroy: '"${{DESTROY}}" == "false"'
+        all:
+          notDestroy: '"${{DESTROY}}" == "false"'
       branch:
         only:
           - master
