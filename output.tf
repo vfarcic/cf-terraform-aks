@@ -9,3 +9,8 @@ output "region" {
 output "resource_group" {
   value = var.resource_group
 }
+
+output "destroy" {
+  value = var.destroy
+}
+

@@ -26,7 +26,8 @@ steps:
       - export CLUSTER_NAME=$(terraform output cluster_name)
       - export RESOURCE_GROUP=$(terraform output resource_group)
       - export REGION=$(terraform output region)
-      - cf_export CLUSTER_NAME RESOURCE_GROUP REGION
+      - export DESTROY=$(terraform output destroy)
+      - cf_export CLUSTER_NAME RESOURCE_GROUP REGION DESTROY
     when:
       branch:
         only:
@@ -43,6 +44,9 @@ steps:
       - sleep 2
       - helm upgrade --install argocd argo-cd --repo https://argoproj.github.io/argo-helm --namespace argocd --create-namespace --version 1.6.2 --values argocd-values.yaml --wait
     when:
+      # New
+      condition:
+        notDestroy: '"${{DESTROY}}" == "false"'
       branch:
         only:
           - master
