@@ -3,7 +3,11 @@ if [ "$1" == "" ]; then
   exit
 fi
 
-az aks get-credentials --name $1 --resource-group $2 --file kubeconfig.yaml
+az aks get-credentials \
+  --name $1 \
+  --resource-group $2 \
+  --file kubeconfig.yaml \
+  --overwrite-existing
 
 echo "Execute the following command to use the newly created Kube config:"
 echo
