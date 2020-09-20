@@ -25,9 +25,8 @@ steps:
       - terraform apply -auto-approve 
       - export CLUSTER_NAME=$(terraform output cluster_name)
       - export RESOURCE_GROUP=$(terraform output resource_group)
-      - export REGION=$(terraform output region)
       - export DESTROY=$(terraform output destroy)
-      - cf_export CLUSTER_NAME RESOURCE_GROUP REGION DESTROY
+      - cf_export CLUSTER_NAME RESOURCE_GROUP DESTROY
     when:
       branch:
         only:
