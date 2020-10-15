@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ "$1" == "" ]; then
   echo "Usage: $0 [CLUSTER_NAME] [RESOURCE_GROUP]"
   exit
