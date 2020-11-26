@@ -1,0 +1,9 @@
+server:
+  ingress:
+    enabled: true
+  extraArgs:
+  - --insecure
+installCRDs: false
+controller:
+  args:
+    appResyncPeriod: 30
