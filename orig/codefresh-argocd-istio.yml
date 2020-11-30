@@ -30,7 +30,7 @@ steps:
     when:
       branch:
         only:
-          - master
+        - master
   apply_app:
     image: vfarcic/az-helm-kubectl:2.9.1
     title: Applying apps
@@ -50,18 +50,18 @@ steps:
           notDestroy: '"${{DESTROY}}" == "false"'
       branch:
         only:
-          - master
-  # istio:
-  #   image: istio/istioctl:1.7.5
-  #   title: Installing Istio
-  #   stage: apps
-  #   commands:
-  #   - istioctl install --skip-confirmation
-  #   when:
-  #     condition:
-  #       all:
-  #         notDestroy: '"${{DESTROY}}" == "false"'
-  #     branch:
-  #       only:
-  #         - master
+        - master
+  istio:
+    image: istio/istioctl:1.7.5
+    title: Installing Istio
+    stage: apps
+    commands:
+    - istioctl install --skip-confirmation
+    when:
+      condition:
+        all:
+          notDestroy: '"${{DESTROY}}" == "false"'
+      branch:
+        only:
+        - master
 
