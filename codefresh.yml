@@ -15,53 +15,38 @@ steps:
     title: Initializing Terraform
     stage: apply
     commands:
-    - terraform init
-    - terraform plan
+      - terraform init
+      - terraform plan
   apply:
     image: hashicorp/terraform:0.13.0
     title: Applying Terraform
     stage: apply
     commands:
-    - terraform apply -auto-approve 
-    - export CLUSTER_NAME=$(terraform output cluster_name)
-    - export RESOURCE_GROUP=$(terraform output resource_group)
-    - export DESTROY=$(terraform output destroy)
-    - cf_export CLUSTER_NAME RESOURCE_GROUP DESTROY
+      - terraform apply -auto-approve 
+      - export CLUSTER_NAME=$(terraform output cluster_name)
+      - export RESOURCE_GROUP=$(terraform output resource_group)
+      - export DESTROY=$(terraform output destroy)
+      - cf_export CLUSTER_NAME RESOURCE_GROUP DESTROY
     when:
       branch:
         only:
-        - master
+          - master
   apply_app:
     image: vfarcic/az-helm-kubectl:2.9.1
     title: Applying apps
     stage: apps
     commands:
-    - az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
-    - chmod +x get-kubeconfig.sh && ./get-kubeconfig.sh $CLUSTER_NAME $RESOURCE_GROUP
-    - export KUBECONFIG=kubeconfig.yaml
-    - kubectl apply --filename https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.35.0/deploy/static/provider/cloud/deploy.yaml
-    - kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
-    - chmod +x get-lb-ip.sh && export INGRESS_HOST=$(./get-lb-ip.sh)
-    - helm upgrade --install argocd argo-cd --repo https://argoproj.github.io/argo-helm --namespace argocd --create-namespace --version 2.8.0 --values argocd-values.yaml --set server.ingress.hosts="{argocd.$INGRESS_HOST.xip.io}" --wait
-    - cf_export KUBECONFIG
+      - az login --service-principal --username $ARM_CLIENT_ID --password $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID
+      - chmod +x get-kubeconfig.sh && ./get-kubeconfig.sh $CLUSTER_NAME $RESOURCE_GROUP
+      - export KUBECONFIG=kubeconfig.yaml
+      - kubectl apply --filename https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.35.0/deploy/static/provider/cloud/deploy.yaml
+      - kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
+      - chmod +x get-lb-ip.sh && export INGRESS_HOST=$(./get-lb-ip.sh)
+      - helm upgrade --install argocd argo-cd --repo https://argoproj.github.io/argo-helm --namespace argocd --create-namespace --version 2.8.0 --values argocd-values.yaml --set server.ingress.hosts="{argocd.$INGRESS_HOST.xip.io}" --wait
     when:
       condition:
         all:
           notDestroy: '"${{DESTROY}}" == "false"'
       branch:
         only:
-        - master
-  istio:
-    image: istio/istioctl:1.7.5
-    title: Installing Istio
-    stage: apps
-    commands:
-    - istioctl install --skip-confirmation
-    when:
-      condition:
-        all:
-          notDestroy: '"${{DESTROY}}" == "false"'
-      branch:
-        only:
-        - master
-
+          - master
